@@ -1,0 +1,48 @@
+version: "3.8"
+services:
+
+  crawler:
+    working_dir: /app
+    volumes: 
+      - ./:/app
+
+  reporting:
+    working_dir: /app
+    volumes:
+      - ./:/app
+    environment:
+      PORT: 8501
+      ROOT: ./
+    ports:
+      - 127.0.0.1:8501:8501
+
+  debug:
+    image: samdobson/streamlit:0.72.0
+    working_dir: /app
+    command: ["debug.py"]
+    volumes:
+      - ./:/app
+    ports:
+      - 127.0.0.1:8502:8500
+
+  tmp:
+    image: samdobson/streamlit:0.72.0
+    working_dir: /app
+    command: ["tmp-02.py"]
+    volumes:
+      - ./:/app
+    ports:
+      - 127.0.0.1:8502:8501
+
+  web:
+    image: caddy:2.4.0-alpine
+    volumes:
+      - ./public:/usr/share/caddy
+    ports:
+      - 127.0.0.1:7200:80
+
+  web-proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile.proxy
+    command: ["lt", "--local-host", "web", "--port", "80"]
