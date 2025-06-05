@@ -1,7 +1,5 @@
 on:
  workflow_dispatch:
- schedule:
-  - cron: "45 */2 * * *"
 jobs:
   trigger:
     runs-on: ubuntu-latest
